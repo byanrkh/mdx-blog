@@ -1,6 +1,7 @@
 import { getAllPosts, getPostBySlug, mdxOptions } from "@/libs/getPost";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import React from "react";
 
 type Props = {
@@ -14,8 +15,11 @@ export function generateStaticParams() {
   }));
 }
 
-export default function page({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function page({ params }: Props) {
+  if (!params || !(await params).slug) {
+    notFound();
+  }
+  const { slug } = await params;
   const post = getPostBySlug(slug);
 
   return (
